@@ -1,55 +1,55 @@
-Questão 2 -
+Questão 2: # Pode rodar o arquivo ex_02.py
 
-role_alias = aliased(Role)
-claim_alias = aliased(Claim)
+    role_alias = aliased(Role)
+    claim_alias = aliased(Claim)
 
-query = session.query(
-    User.name.label('name_user'),
-    User.email.label('email_user'),
-    Role.description.label('description_role'),
-    func.string_agg(Claim.description, ', ').label('description_claims')
-).join(
-    Role, Role.id == User.role_id
-).outerjoin(
-    UserClaim, UserClaim.user_id == User.id
-).outerjoin(
-    Claim, Claim.id == UserClaim.claim_id
-).group_by(
-    User.id, User.name, User.email, Role.description
-).order_by(
-    User.name.asc()
-)
+    query = session.query(
+        User.name.label('name_user'),
+        User.email.label('email_user'),
+        Role.description.label('description_role'),
+        func.string_agg(Claim.description, ', ').label('description_claims')
+    ).join(
+        Role, Role.id == User.role_id
+    ).outerjoin(
+        UserClaim, UserClaim.user_id == User.id
+    ).outerjoin(
+        Claim, Claim.id == UserClaim.claim_id
+    ).group_by(
+        User.id, User.name, User.email, Role.description
+    ).order_by(
+        User.name.asc()
+    )
 
-results = query.all()
-
-# Pode rodar o arquivo ex_02.py
+    results = query.all()
 
 
-Questão 6 - O problema é a variavél de ambiente WALLET_X_TOKEN_MAX_AGE que não está configurada corretamente no pod do k8s.
-Para solucionar vá no arquivo deployment.yaml de produção do k8s e tente encontrar nas variáveis de ambiente WALLET_X_TOKEN_MAX_AGE, se estiver faltando add juntamente com o value correto desta variável.
+Questão 6:
+    O problema é a variavél de ambiente WALLET_X_TOKEN_MAX_AGE que não está configurada corretamente no pod do k8s.
+    Para solucionar vá no arquivo deployment.yaml de produção do k8s e tente encontrar nas variáveis de ambiente WALLET_X_TOKEN_MAX_AGE, se estiver faltando add juntamente com o value correto desta variável.
 
-Questão 8 - A Adapter Pattern seria mais indicada para integrar serviços de terceiros. Pois seria possivel criar uma interface comum que abstrai as diferenças entre o meu serviço e o de terceiros.
-Facilitando assim a comunicação entre os serviços/APIs independente de suas diferenças e incompatibilidades, sem precisar modificar códigos. Além de facilitar a manutenção/troca dos fornecedores e a inclusão de novos (expansão).
+Questão 7 - Code Review:
 
-Questão 7 - Code Review
+    * Algumas importações não estão sendo utilizadas (traceback, timedelta, timezone)
+    * Linha 19 app.config['SQLALCHEMY_DATABASE_URI'] os dados sensiveis (database, senha, user) estão expostos, criar variaveis para esses valores e colocar no .env
+    * Linha 21 a 24 -  add um try e except caso não tenha o arquivo config.ini, alguma variável e o var1 não seja criado corretamente
+    * Linha 28 você cria a variável 'task1_instance' e não utiliza ela, no caso do scheduler.add_job pode chamar direto sem passar ele a uma variável 
+    * Linha 48 - orders = db.session.execute('SELECT * FROM users;') coloque dentro de um try except para fazer tratamento de erro
+    * Linha 61 - index = index + 1 pode ser simplificado para index +=1 (fica mais bonito)
+    * Linha 60 a 76 - a parte de preencher a planilha seria interessante criar uma função ao invés de fazer na mão a worksheet.write
 
-* Algumas importações não estão sendo utilizadas (traceback, timedelta, timezone)
-* Linha 19 app.config['SQLALCHEMY_DATABASE_URI'] os dados sensiveis (database, senha, user) estão expostos, criar variaveis para esses valores e colocar no .env
-* Linha 21 a 24 -  add um try e except caso não tenha o arquivo config.ini, alguma variável e o var1 não seja criado corretamente
-* Linha 28 você cria a variável 'task1_instance' e não utiliza ela, no caso do scheduler.add_job pode chamar direto sem passar ele a uma variável 
-* Linha 48 - orders = db.session.execute('SELECT * FROM users;') coloque dentro de um try except para fazer tratamento de erro
-* Linha 61 - index = index + 1 pode ser simplificado para index +=1 (fica mais bonito)
-* Linha 60 a 76 - a parte de preencher a planilha seria interessante criar uma função ao invés de fazer na mão a worksheet.write
+    // função preenche planilha
 
-// função preenche planilha
+    for order in orders:
+        //chama a função para preenche planilha
+        index += 1 
 
-for order in orders:
-    //chama a função para preenche planilha
-    index += 1 
+    assim polui menos o código e tira a repetição que dificulta a leitura do código
 
-assim polui menos o código e tira a repetição que dificulta a leitura do código
+    * Olhe a documentação do worksheet.write, tente utilizar passando a linha, coluna e argumento EX: worksheet.write(index, 0, order[0])
 
-* Olhe a documentação do worksheet.write, tente utilizar passando a linha, coluna e argumento EX: worksheet.write(index, 0, order[0])
+    * Linha 52 a 58 - worksheet.write('A{0}'.format(index),'Id')
+    da melhorar, na documentação write(row, col, *args) então pense em usar worksheet.write(index, 0, 'Id')
 
-* Linha 52 a 58 - worksheet.write('A{0}'.format(index),'Id')
-da melhorar, na documentação write(row, col, *args) então pense em usar worksheet.write(index, 0, 'Id')
+Questão 8:
+    A Adapter Pattern seria mais indicada para integrar serviços de terceiros. Pois seria possivel criar uma interface comum que abstrai as diferenças entre o meu serviço e o de terceiros.
+    Facilitando assim a comunicação entre os serviços/APIs independente de suas diferenças e incompatibilidades, sem precisar modificar códigos. Além de facilitar a manutenção/troca dos fornecedores e a inclusão de novos (expansão).
