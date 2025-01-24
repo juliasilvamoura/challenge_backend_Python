@@ -1,40 +1,49 @@
-from src.app.models.users import User
-from flask import Blueprint, request, jsonify
+from src.app.models import User, Role
 from werkzeug.security import generate_password_hash
 from src.app import DB
 
 
-def init_user_routes(app):
-    @app.route("/users/<int:id>", methods=["GET"])
-    def get_user_id(id):
-        print(id)
-        user = User.query.filter_by(id=id).first_or_404()
-        print(user)
-        return jsonify(user.as_dict()), 200
+def get_user(id):
+    try:
+        user = User.query.filter_by(id=id).first()
+        return user
+    except Exception as e:
+        return {"error": f"{e}"}
 
-    @app.route("/users", methods=["POST"])
-    def create_user():
-        data = request.json
+def get_role_by_user(id):
+    try:
+        role_by_user = DB.session.query(User.id, User.name, User.role_id).filter_by(id=id).first()
+        return role_by_user
+    except Exception as e:
+        return {"error": f"{e}"}
 
-        # Valida se todos os campos obrigatórios estão presentes
-        required_fields = ["name", "email", "role_id"]
-        for field in required_fields:
-            if field not in data:
-                return jsonify({"error": f"'{field}' is required"}), 400
-        
-        # Valida se o email já está em uso
-        if User.query.filter_by(email=data['email']).first():
-            return jsonify({"error": "Email already in use"}), 400
+def get_role_by_id(id):
+    try:
+        role = Role.query.filter_by(id=id).first()
+        return role
+    except Exception as e:
+        return {"error": f"{e}"} 
 
-        password = data.get("password", "").strip() or data['email']
-        hashed_password = generate_password_hash(password)
+def create_user(body):
+    # Valida se todos os campos obrigatórios estão presentes
+    required_fields = ["name", "email", "role_id"]
+    for field in required_fields:
+        if field not in body:
+            return {"error":f"'{field}' is required"}
+    
+    # Valida se o email já está em uso
+    if User.query.filter_by(email=body['email']).first():
+        return {"error": "Email already in use"}
 
-        new_user = User(
-            name=data['name'],
-            email=data['email'],
-            password=hashed_password,
-            role_id=data['role_id']
-        )
-        DB.session.add(new_user)
-        DB.session.commit()
-        return jsonify(new_user.as_dict()), 201
+    password = body.get("password", "").strip() or body['email']
+    hashed_password = generate_password_hash(password)
+
+    new_user = User(
+        name=body['name'],
+        email=body['email'],
+        password=hashed_password,
+        role_id=body['role_id']
+    )
+    DB.session.add(new_user)
+    DB.session.commit()
+    return new_user

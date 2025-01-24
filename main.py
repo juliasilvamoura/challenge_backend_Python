@@ -1,28 +1,23 @@
-import os
-import click
-from flask.cli import with_appcontext
-
 from src.app import DB, creat_app
-from src.app.controllers.user import init_user_routes
+from src.app.routes import routes
 
 from dotenv import load_dotenv
 load_dotenv()
 
-app = creat_app(os.getenv('FLASK_ENV'))
+app = creat_app()
+routes(app)
 
-init_user_routes(app)
+# def create_tables():
+#     with app.app_context():
+#         DB.create_all()  # Cria todas as tabelas no banco de dados
+#         print("Tabelas criadas com sucesso.")
 
-def create_tables():
-    with app.app_context():
-        DB.create_all()  # Cria todas as tabelas no banco de dados
-        print("Tabelas criadas com sucesso.")
-
-# Função para popular o banco de dados automaticamente
-def populate_db():
-    from src.app.db import populate_db
-    with app.app_context():
-        populate_db()  # Chama a função para popular o banco de dados
-        print("Banco de dados populado com sucesso.")
+# # Função para popular o banco de dados automaticamente
+# def populate_db():
+#     from src.app.db import populate_db
+#     with app.app_context():
+#         populate_db()  # Chama a função para popular o banco de dados
+#         print("Banco de dados populado com sucesso.")
 
 # @click.command(name='create_tables')
 # @with_appcontext
@@ -43,6 +38,4 @@ def populate_db():
 # app.cli.add_command(delete_tables)
 
 if __name__ == "__main__":
-#   creat_app()
-#   populate_db()
-  app.run()
+    app.run(debug=True, port=8000)

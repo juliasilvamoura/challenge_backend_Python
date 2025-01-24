@@ -1,0 +1,5 @@
+NAME_DB= 'root'
+USER_DB= 'root'
+PASSWORD_DB= 'root'
+SQLALCHEMY_TRACK_MODIFICATIONS=False
+FLASK_ENV=development

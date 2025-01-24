@@ -1,8 +1,5 @@
 from src.app.utils import is_table_empty
-from src.app.models.roles import Role
-from src.app.models.users import User
-from src.app.models.claims import Claim
-from src.app.models.user_claim import UserClaim
+from src.app.models import Role, User, Claim, UserClaim
 from src.app import DB
 
 users = [
