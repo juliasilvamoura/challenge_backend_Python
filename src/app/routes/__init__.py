@@ -1,11 +1,12 @@
 from flask import request, jsonify
-from src.app.controllers.user import get_user, create_user, get_role_by_user, get_role_by_id
+from src.app.controllers.user import get_user, create_user, get_role_by_user, get_users
+from src.app.controllers.role import get_role_by_id
 from src.app import DB
 
 
 def routes(app):
     @app.route("/users/<int:id>", methods=["GET"])
-    def get_user_id(id):
+    def get_user_by_id(id):
         user_id = get_user(id)
         if isinstance(user_id, dict) and "error" in user_id:
             return jsonify(user_id), 400  
@@ -45,6 +46,15 @@ def routes(app):
         if new_user is None: 
             return jsonify({"error": "User not found"}), 404
         return jsonify(new_user.as_dict()), 201
+
+    @app.route("/users", methods=["GET"])
+    def get_users_all():
+        users = get_users()
+        if isinstance(users, dict) and "error" in users:
+            return jsonify(users), 400  
+        if users is None: 
+            return jsonify({"error": "User not found"}), 404
+        return jsonify(users), 200
     
     @app.route('/')
     def home():

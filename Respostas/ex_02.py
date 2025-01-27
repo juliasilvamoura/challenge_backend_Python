@@ -132,16 +132,16 @@ claim_alias = aliased(Claim)
 query = session.query(
     User.name.label('name_user'),
     User.email.label('email_user'),
-    Role.description.label('description_role'),
-    func.string_agg(Claim.description, ', ').label('description_claims')
+    role_alias.description.label('description_role'),
+    func.string_agg(claim_alias.description, ', ').label('description_claims')
 ).join(
-    Role, Role.id == User.role_id
+    role_alias, role_alias.id == User.role_id  # Usando o alias
 ).outerjoin(
     UserClaim, UserClaim.user_id == User.id
 ).outerjoin(
-    Claim, Claim.id == UserClaim.claim_id
+    claim_alias, claim_alias.id == UserClaim.claim_id  # Usando o alias
 ).group_by(
-    User.id, User.name, User.email, Role.description
+    User.id, User.name, User.email, role_alias.description
 ).order_by(
     User.name.asc()
 )

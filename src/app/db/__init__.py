@@ -3,10 +3,10 @@ from src.app.models import Role, User, Claim, UserClaim
 from src.app import DB
 
 users = [
-    {"name": "João Victor", "email":'joao@email.com',  "password":"password123", "role_id":1},
-    {"name": "Pablo Willow", "email":'pablo@email.com', "role_id":2},
-    {"name": "Nicoly Moura", "email":'nick@email.com', "role_id":2},
-    {"name": "Henrique Marcolino", "email":'marcos@email.com', "role_id":3},
+    {"name": "João Victor", "email": "joao@email.com", "password": "senha123", "role_id": 1},
+    {"name": "Pablo Willow", "email": "pablo@email.com", "password": "senha123", "role_id": 2},
+    {"name": "Nicoly Moura", "email": "nick@email.com", "password": "senha123", "role_id": 2},
+    {"name": "Julia Moura", "email": "juliasilvamoura@emailteste.com", "password": "juliasenha", "role_id":3}
 ]
 
 roles = [
@@ -56,7 +56,7 @@ def populate_db_claims():
 def populate_db_users_claims():
     if is_table_empty(UserClaim.query.first(), 'claims'):
         for user_claim in user_claims:
-            new_user_claim = Claim(**user_claim)
+            new_user_claim = UserClaim(**user_claim)
             DB.session.add(new_user_claim)
         DB.session.commit()
         print("Users populated")

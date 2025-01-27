@@ -1,4 +1,6 @@
-from src.app.models import User, Role
+from src.app.models import User, Role, Claim, UserClaim
+from sqlalchemy.orm import aliased
+from sqlalchemy import func
 from werkzeug.security import generate_password_hash
 from src.app import DB
 
@@ -17,12 +19,12 @@ def get_role_by_user(id):
     except Exception as e:
         return {"error": f"{e}"}
 
-def get_role_by_id(id):
-    try:
-        role = Role.query.filter_by(id=id).first()
-        return role
-    except Exception as e:
-        return {"error": f"{e}"} 
+# def get_role_by_id(id):
+#     try:
+#         role = Role.query.filter_by(id=id).first()
+#         return role
+#     except Exception as e:
+#         return {"error": f"{e}"} 
 
 def create_user(body):
     # Valida se todos os campos obrigatórios estão presentes
@@ -47,3 +49,42 @@ def create_user(body):
     DB.session.add(new_user)
     DB.session.commit()
     return new_user
+
+def get_users():
+    try:
+        role_alias = aliased(Role)
+        claim_alias = aliased(Claim)
+
+        query = DB.session.query(
+            User.name.label('name_user'),
+            User.email.label('email_user'),
+            role_alias.description.label('description_role'),
+            func.string_agg(claim_alias.description, ', ').label('description_claims')
+        ).join(
+            role_alias, role_alias.id == User.role_id
+        ).outerjoin(
+            UserClaim, UserClaim.user_id == User.id
+        ).outerjoin(
+            claim_alias, claim_alias.id == UserClaim.claim_id
+        ).group_by(
+            User.id, User.name, User.email, role_alias.description
+        ).order_by(
+            User.name.asc()
+        )
+
+        results = query.all()
+
+        if not results:
+            return None
+
+        response = [{
+        'name_user': result.name_user,
+        'email_user': result.email_user,
+        'description_role': result.description_role,
+        'description_claims': result.description_claims
+        } for result in results]
+
+        return response
+    
+    except Exception as e:
+        return {"error": f"{e}"}
