@@ -24,14 +24,14 @@ Install Python 3.13.0
 # Ambient configuration API:
 <ul>
 <li>Create a .env file using the env_example template</li>
-<li>Execute the command: <i>.\venv\Scripts\activate</i><br>
-To activate the venv</li>
+<li>Execute the command: <i>pip install -r requirements.txt
+</i><br>
+To install the project dependencies</li>
 <li>Execute the command: <i>docker compose up -d</i><br> To start the PostgreSQL database locally</li>
 <li>Execute the command: <i>flask init-db</i><br> To create and populate the tables in the database</li>
 <li>Execute the command: <i>Flask run</i> or <i>python main.py</i><br> To start the API</li>
 <li>For question 2, a route has been implemented to perform the query <br><i>[GET] /users</i></li>
 <li>If you prefer, you can run question 2 using only SQLAlchemy with: <br><i>python .\Respostas\ex_02.py</i></li>
-<li>Execute the command: <i>deactivate</i><br> To deactivate the venv</li>
 </ul>
 
 # Technologies:
