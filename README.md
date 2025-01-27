@@ -32,6 +32,7 @@ To install the project dependencies</li>
 <li>Execute the command: <i>Flask run</i> or <i>python main.py</i><br> To start the API</li>
 <li>For question 2, a route has been implemented to perform the query <br><i>[GET] /users</i></li>
 <li>If you prefer, you can run question 2 using only SQLAlchemy with: <br><i>python .\Respostas\ex_02.py</i></li>
+<li>Execute the command: <i>docker compose down -v</i><br>
 </ul>
 
 # Technologies:
