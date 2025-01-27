@@ -18,8 +18,8 @@ Project developed in Python, an API following OOP practices to create users with
 
 # Environment Prerequisites:
 
-Install Go 1.23.2
-<a href="https://go.dev/doc/install">Go</a>
+Install Python 3.13.0
+<a href="https://www.python.org/downloads/release/python-3130">Python</a>
 
 # Ambient configuration API:
 <ul>
